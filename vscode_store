@@ -157,13 +157,13 @@ def setStoreOpenVSX():
 
 if __name__ == "__main__":
 
-    if "-l" in opts:
+    if "-l" in opts or "--list" in opts:
         printStoreConfig()
 
-    if "-la" in opts:
+    if "-la" in opts or "--list-all" in opts:
         printStoreConfig(True)
     
-    if "-s" in opts:
+    if "-s" in opts or "--set" in opts:
         if (args[0] == STORE_NAME_VISUALSTUDIOCOM):
             setStoreVisualStudioCom()
             printSuccessfulStoreDefine()
