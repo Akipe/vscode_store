@@ -119,7 +119,7 @@ def printStoreConfig(isDiplayAllInformations: bool = False):
             config_to_show['cacheUrl'] = "empty"
 
         print(
-            """serviceUrl: {serviceUrl}
+"""serviceUrl: {serviceUrl}
 itemUrl:    {itemUrl}
 cacheUrl:   {cacheUrl}"""
             .format(
