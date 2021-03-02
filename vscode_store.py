@@ -98,12 +98,7 @@ def setStoreConfig(service_url, item_url, cache_url):
     setItemUrl(product_config_json_deserialized, item_url)
     setCacheUrl(product_config_json_deserialized, cache_url)
 
-    with open(PRODUCT_CONFIG_FILE_PATH, 'w') as product_config_file_write:
-        json.dump(
-            product_config_json_deserialized,
-            product_config_file_write,
-            indent = "\t"
-        )
+    writeSerializedProductConfig(product_config_json_deserialized)
 
 def printStoreConfig():
     config_to_show = getStoreConfig()
