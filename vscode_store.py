@@ -2,25 +2,29 @@
 
 import json
 import re
+import sys
 
-PRODUCT_CONFIG_FILE_PATH = "/usr/lib/code/product.json"
-#PRODUCT_CONFIG_FILE_PATH = "./product.json"
+PRODUCT_CONFIG_FILE_PATH: str = "/usr/lib/code/product.json"
 
-CONFIG_STORE_OPENVSX = dict([
+STORE_NAME_VISUALSTUDIOCOM: str = "visualstudio"
+STORE_NAME_OPENVSX: str         = "openvsx"
+
+CONFIG_STORE_OPENVSX: dict = dict([
     ('serviceUrl',  "https://open-vsx.org/vscode/gallery"),
     ('itemUrl',     "https://open-vsx.org/vscode/item"),
     ('cacheUrl',    False),
     ('storeName',   'open-vsx.org')
 ])
 
-CONFIG_STORE_VISUALSTUDIOCOM = dict([
+CONFIG_STORE_VISUALSTUDIOCOM: dict = dict([
     ('serviceUrl',  "https://marketplace.visualstudio.com/_apis/public/gallery"),
     ('itemUrl',     "https://marketplace.visualstudio.com/items"),
     ('cacheUrl',    "https://vscode.blob.core.windows.net/gallery/index"),
     ('storeName',   'marketplace.visualstudio.com')
 ])
 
-
+opts = [opt for opt in sys.argv[1:] if opt.startswith("-")]
+args = [arg for arg in sys.argv[1:] if not arg.startswith("-")]
 
 def readDeserializedProductConfig():
     with open(PRODUCT_CONFIG_FILE_PATH, 'r') as product_config_file_open:
@@ -35,24 +39,24 @@ def writeSerializedProductConfig(json_data_serialized_to_write):
             indent="\t"
         )
 
-def returnDomaineNameFromURL(urlToRegex):
+def returnDomaineNameFromURL(urlToRegex: str) -> str:
     match = re.search('https?://([A-Za-z_0-9.-]+).*', urlToRegex)
     if match:
         return match.group(1)
     else:
         return False
 
-def getStoreName(jsonSerializeConfig):
+def getStoreName(jsonSerializeConfig) -> str:
     return returnDomaineNameFromURL(getServiceUrl(jsonSerializeConfig))
 
-def getServiceUrl(jsonSerializeConfig):
+def getServiceUrl(jsonSerializeConfig) -> str:
     return jsonSerializeConfig["extensionsGallery"]["serviceUrl"]
 
 def setServiceUrl(jsonSerializeConfig, value):
     jsonSerializeConfig["extensionsGallery"]["serviceUrl"] = value
     return jsonSerializeConfig
 
-def getItemUrl(jsonSerializeConfig):
+def getItemUrl(jsonSerializeConfig) -> str:
     return jsonSerializeConfig["extensionsGallery"]["itemUrl"]
 
 def setItemUrl(jsonSerializeConfig, value):
@@ -74,7 +78,7 @@ def setCacheUrl(jsonSerializeConfig, value):
 
 
 
-def getStoreConfig():
+def getStoreConfig() -> dict:
     product_config_json_deserialized = readDeserializedProductConfig()
 
     return_config = dict([
@@ -91,7 +95,7 @@ def getStoreConfig():
 
     return return_config
 
-def setStoreConfig(service_url, item_url, cache_url):
+def setStoreConfig(service_url: str, item_url: str, cache_url):
     product_config_json_deserialized = readDeserializedProductConfig()
 
     setServiceUrl(product_config_json_deserialized, service_url)
@@ -100,20 +104,38 @@ def setStoreConfig(service_url, item_url, cache_url):
 
     writeSerializedProductConfig(product_config_json_deserialized)
 
-def printStoreConfig():
+def printStoreConfig(isDiplayAllInformations: bool = False):
     config_to_show = getStoreConfig()
 
-    if (not config_to_show['cacheUrl']):
-        config_to_show['cacheUrl'] = "empty"
+    print(
+        "Current store is configure for {storeName}"
+        .format(
+            storeName = config_to_show['storeName']
+        )
+    )
 
-    print("""Current store is configure for {storeName}
-serviceUrl: {serviceUrl}
+    if (isDiplayAllInformations):
+        if (not config_to_show['cacheUrl']):
+            config_to_show['cacheUrl'] = "empty"
+
+        print(
+            """serviceUrl: {serviceUrl}
 itemUrl:    {itemUrl}
-cacheUrl:   {cacheUrl}""".format(
-        serviceUrl = config_to_show['serviceUrl'],
-        itemUrl = config_to_show['itemUrl'],
-        cacheUrl = config_to_show['cacheUrl'],
-        storeName = config_to_show['storeName']
+cacheUrl:   {cacheUrl}"""
+            .format(
+                serviceUrl = config_to_show['serviceUrl'],
+                itemUrl = config_to_show['itemUrl'],
+                cacheUrl = config_to_show['cacheUrl']
+            )
+        )
+
+def printSuccessfulStoreDefine():
+    config_to_show = getStoreConfig()
+
+    print(
+        "The store is now for {storeName}"
+        .format(
+            storeName = config_to_show['storeName']
         )
     )
 
@@ -131,5 +153,20 @@ def setStoreOpenVSX():
         CONFIG_STORE_OPENVSX['cacheUrl']
     )
 
-setStoreVisualStudioCom()
-printStoreConfig()
+
+
+if __name__ == "__main__":
+
+    if "-l" in opts:
+        printStoreConfig()
+
+    if "-la" in opts:
+        printStoreConfig(True)
+    
+    if "-s" in opts:
+        if (args[0] == STORE_NAME_VISUALSTUDIOCOM):
+            setStoreVisualStudioCom()
+            printSuccessfulStoreDefine()
+        elif (args[0] == STORE_NAME_OPENVSX):
+            setStoreOpenVSX()
+            printSuccessfulStoreDefine()
