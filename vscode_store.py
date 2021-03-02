@@ -22,12 +22,12 @@ CONFIG_STORE_VISUALSTUDIOCOM = dict([
 
 
 
-def read_deserialized_product_config():
+def readDeserializedProductConfig():
     with open(PRODUCT_CONFIG_FILE_PATH, 'r') as product_config_file_open:
         product_config_deserialized = json.load(product_config_file_open)
         return product_config_deserialized
 
-def write_serialized_product_config(json_data_serialized_to_write):
+def writeSerializedProductConfig(json_data_serialized_to_write):
     with open(PRODUCT_CONFIG_FILE_PATH, 'w') as product_config_file_write:
         json.dump(
             json_data_serialized_to_write,
@@ -74,8 +74,8 @@ def setCacheUrl(jsonSerializeConfig, value):
 
 
 
-def get_store_config():
-    product_config_json_deserialized = read_deserialized_product_config()
+def getStoreConfig():
+    product_config_json_deserialized = readDeserializedProductConfig()
 
     return_config = dict([
         ("serviceUrl", False),
@@ -91,8 +91,8 @@ def get_store_config():
 
     return return_config
 
-def set_store_config(service_url, item_url, cache_url):
-    product_config_json_deserialized = read_deserialized_product_config()
+def setStoreConfig(service_url, item_url, cache_url):
+    product_config_json_deserialized = readDeserializedProductConfig()
 
     setServiceUrl(product_config_json_deserialized, service_url)
     setItemUrl(product_config_json_deserialized, item_url)
@@ -105,8 +105,8 @@ def set_store_config(service_url, item_url, cache_url):
             indent = "\t"
         )
 
-def print_store_config():
-    config_to_show = get_store_config()
+def printStoreConfig():
+    config_to_show = getStoreConfig()
 
     if (not config_to_show['cacheUrl']):
         config_to_show['cacheUrl'] = "empty"
@@ -123,18 +123,18 @@ cacheUrl:   {cacheUrl}""".format(
     )
 
 def setStoreVisualStudioCom():
-    set_store_config(
+    setStoreConfig(
         CONFIG_STORE_VISUALSTUDIOCOM['serviceUrl'],
         CONFIG_STORE_VISUALSTUDIOCOM['itemUrl'],
         CONFIG_STORE_VISUALSTUDIOCOM['cacheUrl']
     )
 
 def setStoreOpenVSX():
-    set_store_config(
+    setStoreConfig(
         CONFIG_STORE_OPENVSX['serviceUrl'],
         CONFIG_STORE_OPENVSX['itemUrl'],
         CONFIG_STORE_OPENVSX['cacheUrl']
     )
 
 setStoreVisualStudioCom()
-print_store_config()
+printStoreConfig()
