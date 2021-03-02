@@ -157,6 +157,21 @@ def setStoreOpenVSX():
 
 if __name__ == "__main__":
 
+    if "-h" in opts or "--help" in opts:
+        print(
+"""vscode_store - configure extension registry for Visual Studio Code.
+
+DESCRIPTION
+
+You can use several options :
+
+    -l, --list  Show actual store use
+
+    -s, --set store_name
+                Change store to store_name.
+                You can replace it with "visualstudio" for use official Microsoft extension store, or "openvsx" for use Open VSX registry."""
+        )
+
     if "-l" in opts or "--list" in opts:
         printStoreConfig()
 
